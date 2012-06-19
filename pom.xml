@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<artifactId>${artifactId}</artifactId>
+	<version>1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
+	<name>Noname Simonsoft project</name>
+	<url>http://www.simonsoft.se/</url>
+	
+	<parent>
+		<groupId>se.simonsoft</groupId>
+		<artifactId>cms-maven-parent</artifactId>
+		<version>2.0</version>
+		<relativePath/>
+	</parent>
+	
+	<scm>
+		<developerConnection>
+			scm:svn:https://pds-svn-gbg.pdsvision.net/svn/modules/${project.artifactId}/trunk
+		</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<issueManagement>
+		<system>Trac</system>
+		<!-- This may not be a real URL but we could do redirect to a component report in Trac -->
+		<url>https://pds-svn-gbg.pdsvision.net/trac/modules/${project.artifactId}</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://build.pdsvision.net/</url>
+	</ciManagement>
+
+	<repositories>
+		<repository>
+			<id>pdsvisionReleases</id>
+			<name>PDSVision Releases</name>
+			<url>http://build.pdsvision.net/releases/</url>
+		</repository>
+		<repository>
+			<id>repos.open.repo</id>
+			<name>Repos Open Repository</name>
+			<url>http://reposserver.sourceforge.net/maven/</url>
+		</repository>		
+	</repositories>
+	
+	<dependencies>
+		<!-- logging backend for unit tests: log debug and above to console, no need for config file -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback-version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+</project>
