@@ -18,15 +18,10 @@
 
 	<repositories>
 		<repository>
-			<id>pdsvisionReleases</id>
-			<name>PDSVision Releases</name>
-			<url>http://build.pdsvision.net/releases/</url>
-		</repository>
-		<repository>
 			<id>repos.open.repo</id>
 			<name>Repos Open Repository</name>
 			<url>http://reposserver.sourceforge.net/maven/</url>
-		</repository>		
+		</repository>
 	</repositories>
 	
 	<dependencies>
