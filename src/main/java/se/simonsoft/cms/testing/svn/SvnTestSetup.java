@@ -30,6 +30,10 @@ import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
+import org.tmatesoft.svn.core.wc2.SvnOperationFactory;
+import org.tmatesoft.svn.core.wc2.SvnTarget;
+import org.tmatesoft.svn.core.wc2.admin.SvnRepositoryLoad;
 
 import se.repos.lgr.Lgr;
 import se.repos.lgr.LgrFactory;
@@ -41,7 +45,7 @@ import se.simonsoft.cms.item.encoding.Base32;
 
 public class SvnTestSetup {
 
-	private boolean doCleanup = true;
+	private boolean doCleanup = false;
 	
 	private final Lgr logger = LgrFactory.getLogger();
 	
@@ -179,7 +183,15 @@ public class SvnTestSetup {
 		System.out.println("Running local apache svn repository " + url);
 		testRepositories.add(dir);
 		if (dumpfile != null) {
-			
+			System.out.println("Loading");
+			SvnRepositoryLoad load = new SvnOperationFactory().createRepositoryLoad();
+			load.setDumpStream(dumpfile);
+			load.addTarget(SvnTarget.fromFile(dir));
+			try {
+				load.run();
+			} catch (SVNException e) {
+				throw new RuntimeException("Error not handled", e);
+			}
 		}
 		return new CmsTestRepository(repo, dir, svnHttpUsername, svnHttpPassword);
 	}
