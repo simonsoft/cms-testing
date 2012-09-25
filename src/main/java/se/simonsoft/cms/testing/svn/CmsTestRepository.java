@@ -30,6 +30,8 @@ public class CmsTestRepository extends CmsRepository {
 	private File repoFolder;
 	private String user;
 	private String password;
+	
+	private boolean keep = false;
 
 	public CmsTestRepository(SVNRepository svnkit, File repoFolder, String user, String password) {
 		super(getUrl(svnkit));
@@ -37,6 +39,24 @@ public class CmsTestRepository extends CmsRepository {
 		this.repoFolder = repoFolder;
 		this.user = user;
 		this.password = password;
+	}
+	
+	/**
+	 * Flags to test setup that the repository should be kept after tearDown, for manual investigation.
+	 */
+	public void keep() {
+		this.keep = true;
+	}
+	
+	public boolean isKeep() {
+		return keep;
+	}
+
+	/**
+	 * @param keep see {@link #keep()}
+	 */
+	public void setKeep(boolean keep) {
+		this.keep = keep;
 	}
 	
 	/**

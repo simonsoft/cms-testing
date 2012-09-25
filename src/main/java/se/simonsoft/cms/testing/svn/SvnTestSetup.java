@@ -41,8 +41,6 @@ import se.simonsoft.cms.item.encoding.Base32;
 
 public class SvnTestSetup {
 
-	private boolean doCleanup = false;
-	
 	private final Lgr logger = LgrFactory.getLogger();
 	
 	public static final String[] TRY_PATHS = {
@@ -59,7 +57,7 @@ public class SvnTestSetup {
 	private String urlRoot = null;
 	private File pathParent = null;
 	
-	private List<File> testRepositories = new LinkedList<File>();
+	private List<CmsTestRepository> testRepositories = new LinkedList<CmsTestRepository>();
 	
 	private SvnTestSetup() {}
 	
@@ -166,18 +164,20 @@ public class SvnTestSetup {
 			throw new RuntimeException("Error not handled", e);
 		}
 		
-		SVNRepository repo;
+		SVNRepository svnkit;
 		DAVRepositoryFactory.setup();
 		try {
-			repo = SVNRepositoryFactory.create(svnurl);
+			svnkit = SVNRepositoryFactory.create(svnurl);
 		} catch (SVNException e) {
 			throw new RuntimeException("Error not handled", e);
 		}
 		String svnHttpUsername = getSvnHttpUsername(url);
 		String svnHttpPassword = getSvnHttpPassword(url);
-		repo.setAuthenticationManager(new BasicAuthenticationManager(svnHttpUsername, svnHttpPassword));
-		System.out.println("Running local apache svn repository " + url);
-		testRepositories.add(dir);
+		svnkit.setAuthenticationManager(new BasicAuthenticationManager(svnHttpUsername, svnHttpPassword));
+		
+		CmsTestRepository repo = new CmsTestRepository(svnkit, dir, svnHttpUsername, svnHttpPassword);
+		testRepositories.add(repo);
+		
 		if (dumpfile != null) {
 			SVNAdminClient svnadmin = new SVNAdminClient(SVNWCUtil.createDefaultAuthenticationManager(), null);
 			try {
@@ -186,41 +186,28 @@ public class SvnTestSetup {
 				throw new RuntimeException("Error not handled", e);
 			}
 		}
-		return new CmsTestRepository(repo, dir, svnHttpUsername, svnHttpPassword);
+		
+		return repo;
 	}
 	
 	/**
 	 * Always call this after tests, clears temporary files from local file system.
 	 */
 	public void tearDown() {
-		for (File r : testRepositories) {
-			if (doCleanup) {
+		for (CmsTestRepository r : testRepositories) {
+			if (r.isKeep()) {
+				System.out.println("Test repository " + r.getName() + " kept at:"
+						+ "\n file://" + r.getLocalFolder().getAbsolutePath()
+						+ "\n " + r.getUrl());
+			} else {
 				try {
-					showLog(r);
-				} catch (IOException e) {
-					throw new RuntimeException("Error not handled", e);
-				}
-				try {
-					FileUtils.deleteDirectory(r);
+					FileUtils.deleteDirectory(r.getLocalFolder());
 				} catch (IOException e) {
 					throw new RuntimeException("Error not handled", e);
 				}
 			}
 		}
 		testRepositories.clear();
-	}
-	
-	public void showLog(File repoDir) throws IOException {
-		if (!doCleanup) {
-			System.out.println("---- test repo examination ----");
-			System.out.println("svn log -v file:///" + repoDir.getAbsolutePath().replace('\\', '/') + "");
-		}
-		Process exec = Runtime.getRuntime().exec("svn log -v file:///" + repoDir.getAbsolutePath().replace('\\', '/') + "");
-		InputStream log = exec.getInputStream();
-		int c;
-		while ((c = log.read()) != -1) {
-			System.out.print((char) c);
-		}
 	}
 	
 }
