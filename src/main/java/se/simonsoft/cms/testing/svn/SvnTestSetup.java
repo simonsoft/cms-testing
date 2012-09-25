@@ -22,18 +22,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.BasicAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
-import org.tmatesoft.svn.core.wc2.SvnOperationFactory;
-import org.tmatesoft.svn.core.wc2.SvnTarget;
-import org.tmatesoft.svn.core.wc2.admin.SvnRepositoryLoad;
 
 import se.repos.lgr.Lgr;
 import se.repos.lgr.LgrFactory;
@@ -183,12 +179,9 @@ public class SvnTestSetup {
 		System.out.println("Running local apache svn repository " + url);
 		testRepositories.add(dir);
 		if (dumpfile != null) {
-			System.out.println("Loading");
-			SvnRepositoryLoad load = new SvnOperationFactory().createRepositoryLoad();
-			load.setDumpStream(dumpfile);
-			load.addTarget(SvnTarget.fromFile(dir));
+			SVNAdminClient svnadmin = new SVNAdminClient(SVNWCUtil.createDefaultAuthenticationManager(), null);
 			try {
-				load.run();
+				svnadmin.doLoad(dir, dumpfile);
 			} catch (SVNException e) {
 				throw new RuntimeException("Error not handled", e);
 			}

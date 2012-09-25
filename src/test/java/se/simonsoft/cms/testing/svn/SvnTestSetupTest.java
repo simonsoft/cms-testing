@@ -17,6 +17,9 @@ package se.simonsoft.cms.testing.svn;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+
 import org.junit.After;
 import org.junit.Test;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -53,6 +56,32 @@ public class SvnTestSetupTest {
 		assertTrue("got " + repoUrl, repoUrl.startsWith(SvnTestSetup.getInstance().getSvnHttpParentUrl()));
 		assertTrue("got " + repoUrl, repoUrl.length() > SvnTestSetup.getInstance().getSvnHttpParentUrl().length() + 10);
 		assertTrue(!repoUrl.endsWith("/"));
+		assertTrue(repo.getLocalFolder().exists());
+		assertTrue(repo.getLocalFolder().canRead());
+		assertTrue("should be a subversion repository", new File(repo.getLocalFolder(), "format").exists());
+	}
+	
+	@Test
+	public void testLoadDumpfile() {
+		String dump = "SVN-fs-dump-format-version: 2\n"
+				+ "\n"
+				+ "UUID: 9ff1b372-1b0e-41ec-946b-24d40082c707\n"
+				+ "\n"
+				+ "Revision-number: 0\n"
+				+ "Prop-content-length: 73\n"
+				+ "Content-length: 73\n"
+				+ "\n"
+				+ "K 8\n"
+				+ "svn:date\n"
+				+ "V 27\n"
+				+ "2012-09-25T19:07:32.517877Z\n"
+				+ "K 4\n"
+				+ "test\n"
+				+ "V 3\n"
+				+ "yes\n"
+				+ "PROPS-END\n";
+		SvnTestSetup.getInstance().getRepository(new ByteArrayInputStream(dump.getBytes()));
+		
 	}
 
 }
