@@ -142,13 +142,23 @@ public class SvnTestSetup {
 		return getRepository(null);
 	}
 	
+	private String getCaller() {
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		for (int i = 1; i < stackTrace.length; i++) {
+			if (!this.getClass().getName().equals(stackTrace[i].getClassName())) {
+				return stackTrace[i].getClassName();// + "." + stackTrace[i].getMethodName();
+			}
+		}
+		return stackTrace[0].getClassName();
+	}
+	
 	/**
 	 * Creates a new repository and adds content from a dumpfile.
 	 * @param dumpfile from svnadmin dump
 	 * @return repository with the dupfile loaded
 	 */
 	public CmsTestRepository getRepository(InputStream dumpfile) {
-		String tempName = new Base32().encode(System.currentTimeMillis()) + "." + Thread.currentThread().getStackTrace()[2].getClassName();
+		String tempName = "test-" + new Base32().encode(System.currentTimeMillis()) + "." + getCaller();
 		String url = getSvnHttpParentUrl() + tempName;
 		File dir = new File(getSvnParentPath(), tempName);
 		SVNURL svnurl;
