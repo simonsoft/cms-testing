@@ -17,6 +17,8 @@ package se.simonsoft.cms.testing.svn;
 
 import java.io.File;
 
+import javax.inject.Provider;
+
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.io.SVNRepository;
@@ -64,6 +66,19 @@ public class CmsTestRepository extends CmsRepository {
 	 */
 	public SVNRepository getSvnkit() {
 		return svnkit;
+	}
+	
+	/**
+	 * @return for svnkit based impls that get repository provider injected
+	 */
+	public Provider<SVNRepository> getSvnkitProvider() {
+		final CmsTestRepository repo = this;
+		return new Provider<SVNRepository>() {
+			@Override
+			public SVNRepository get() {
+				return repo.getSvnkit();
+			}
+		};
 	}
 
 	public File getLocalFolder() {

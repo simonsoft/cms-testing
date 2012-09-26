@@ -148,7 +148,7 @@ public class SvnTestSetup {
 	 * @return repository with the dupfile loaded
 	 */
 	public CmsTestRepository getRepository(InputStream dumpfile) {
-		String tempName = new Base32().encode(System.currentTimeMillis()) + "." + Thread.currentThread().getStackTrace()[1].getClassName();
+		String tempName = new Base32().encode(System.currentTimeMillis()) + "." + Thread.currentThread().getStackTrace()[2].getClassName();
 		String url = getSvnHttpParentUrl() + tempName;
 		File dir = new File(getSvnParentPath(), tempName);
 		SVNURL svnurl;
