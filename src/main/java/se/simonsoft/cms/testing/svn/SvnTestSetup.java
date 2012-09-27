@@ -161,15 +161,27 @@ public class SvnTestSetup {
 		String tempName = "test-" + new Base32().encode(System.currentTimeMillis()) + "." + getCaller();
 		String url = getSvnHttpParentUrl() + tempName;
 		File dir = new File(getSvnParentPath(), tempName);
-		SVNURL svnurl;
+		
 		try {
-			svnurl = SVNURL.parseURIEncoded(url);
+			SVNRepositoryFactory.createLocalRepository(dir, true, false);
 		} catch (SVNException e) {
 			throw new RuntimeException("Error not handled", e);
 		}
 		
+		CmsTestRepository repo = connect(dir, url);
+		testRepositories.add(repo);
+		
+		if (dumpfile != null) {
+			load(dir, dumpfile);
+		}
+		
+		return repo;
+	}
+
+	public CmsTestRepository connect(File localRepositoryDir, String repositoryRootUrl) {
+		SVNURL svnurl;
 		try {
-			SVNRepositoryFactory.createLocalRepository(dir, true, false);
+			svnurl = SVNURL.parseURIEncoded(repositoryRootUrl);
 		} catch (SVNException e) {
 			throw new RuntimeException("Error not handled", e);
 		}
@@ -181,23 +193,21 @@ public class SvnTestSetup {
 		} catch (SVNException e) {
 			throw new RuntimeException("Error not handled", e);
 		}
-		String svnHttpUsername = getSvnHttpUsername(url);
-		String svnHttpPassword = getSvnHttpPassword(url);
+		String svnHttpUsername = getSvnHttpUsername(repositoryRootUrl);
+		String svnHttpPassword = getSvnHttpPassword(repositoryRootUrl);
 		svnkit.setAuthenticationManager(new BasicAuthenticationManager(svnHttpUsername, svnHttpPassword));
 		
-		CmsTestRepository repo = new CmsTestRepository(svnkit, dir, svnHttpUsername, svnHttpPassword);
-		testRepositories.add(repo);
-		
-		if (dumpfile != null) {
-			SVNAdminClient svnadmin = new SVNAdminClient(SVNWCUtil.createDefaultAuthenticationManager(), null);
-			try {
-				svnadmin.doLoad(dir, dumpfile);
-			} catch (SVNException e) {
-				throw new RuntimeException("Error not handled", e);
-			}
-		}
-		
+		CmsTestRepository repo = new CmsTestRepository(svnkit, localRepositoryDir, svnHttpUsername, svnHttpPassword);
 		return repo;
+	}
+	
+	public void load(File localRepositoryDir, InputStream dumpfile) {
+		SVNAdminClient svnadmin = new SVNAdminClient(SVNWCUtil.createDefaultAuthenticationManager(), null);
+		try {
+			svnadmin.doLoad(localRepositoryDir, dumpfile);
+		} catch (SVNException e) {
+			throw new RuntimeException("Error not handled", e);
+		}
 	}
 	
 	/**
