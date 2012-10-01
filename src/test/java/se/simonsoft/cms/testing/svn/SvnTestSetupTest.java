@@ -24,8 +24,14 @@ import org.junit.After;
 import org.junit.Test;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNProperties;
+import org.tmatesoft.svn.core.SVNPropertyValue;
+import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc2.ISvnObjectReceiver;
+import org.tmatesoft.svn.core.wc2.SvnGetProperties;
+import org.tmatesoft.svn.core.wc2.SvnTarget;
 
 public class SvnTestSetupTest {
 
@@ -62,7 +68,7 @@ public class SvnTestSetupTest {
 	}
 	
 	@Test
-	public void testLoadDumpfile() {
+	public void testLoadDumpfile() throws SVNException {
 		String dump = "SVN-fs-dump-format-version: 2\n"
 				+ "\n"
 				+ "UUID: 9ff1b372-1b0e-41ec-946b-24d40082c707\n"
@@ -80,8 +86,31 @@ public class SvnTestSetupTest {
 				+ "V 3\n"
 				+ "yes\n"
 				+ "PROPS-END\n";
-		SvnTestSetup.getInstance().getRepository(new ByteArrayInputStream(dump.getBytes()));
-		
+		CmsTestRepository repo = SvnTestSetup.getInstance().getRepository().load(new ByteArrayInputStream(dump.getBytes()));
+		SvnGetProperties propget = repo.getSvnkitOp().createGetProperties();
+		propget.setRevisionProperties(true);
+		propget.setRevision(SVNRevision.create(0));
+		propget.setSingleTarget(SvnTarget.fromURL(SVNURL.parseURIEncoded(repo.getUrl() + "/")));
+		propget.setReceiver(new ISvnObjectReceiver<SVNProperties>() {
+			@Override
+			public void receive(SvnTarget target, SVNProperties object) throws SVNException {
+				assertEquals("yes", SVNPropertyValue.getPropertyAsString(object.getSVNPropertyValue("test")));
+			}
+		});
+		propget.run();
 	}
 
+	@Test
+	public void testNamedRepository() {
+		CmsTestRepository repo = SvnTestSetup.getInstance().getRepository("testaut1");
+		assertEquals("testaut1", repo.getLocalFolder().getName());
+		assertTrue(repo.getUrl().endsWith("/testaut1"));
+		try {
+			SvnTestSetup.getInstance().getRepository("testaut1");
+			fail("Should refuse to create a repository with same name as existing");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+	}
+	
 }

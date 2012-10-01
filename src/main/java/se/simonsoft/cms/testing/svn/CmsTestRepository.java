@@ -16,6 +16,7 @@
 package se.simonsoft.cms.testing.svn;
 
 import java.io.File;
+import java.io.InputStream;
 
 import javax.inject.Provider;
 
@@ -23,6 +24,9 @@ import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
+import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
+import org.tmatesoft.svn.core.wc2.SvnOperationFactory;
 
 import se.simonsoft.cms.item.CmsRepository;
 
@@ -41,6 +45,20 @@ public class CmsTestRepository extends CmsRepository {
 		this.repoFolder = repoFolder;
 		this.user = user;
 		this.password = password;
+	}
+	
+	/**
+	 * @param dumpfile from svnadmin dump
+	 * @return the instance
+	 */
+	public CmsTestRepository load(InputStream dumpfile) {
+		SVNAdminClient svnadmin = new SVNAdminClient(SVNWCUtil.createDefaultAuthenticationManager(), null);
+		try {
+			svnadmin.doLoad(repoFolder, dumpfile);
+		} catch (SVNException e) {
+			throw new RuntimeException("Error not handled", e);
+		}
+		return this;
 	}
 	
 	/**
@@ -66,6 +84,15 @@ public class CmsTestRepository extends CmsRepository {
 	 */
 	public SVNRepository getSvnkit() {
 		return svnkit;
+	}
+	
+	/**
+	 * @return access to the new relatively maintainer friendly wc2 operations api
+	 */
+	public SvnOperationFactory getSvnkitOp() {
+		SvnOperationFactory op = new SvnOperationFactory();
+		op.setAuthenticationManager(getSvnkit().getAuthenticationManager());
+		return op;
 	}
 	
 	/**

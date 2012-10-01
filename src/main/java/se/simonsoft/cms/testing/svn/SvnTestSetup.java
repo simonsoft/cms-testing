@@ -17,7 +17,6 @@ package se.simonsoft.cms.testing.svn;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,8 +27,6 @@ import org.tmatesoft.svn.core.auth.BasicAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
-import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
 
 import se.repos.lgr.Lgr;
 import se.repos.lgr.LgrFactory;
@@ -134,33 +131,22 @@ public class SvnTestSetup {
 	}
 	
 	/**
-	 * Creates a new repository.
-	 * Call {@link #tearDown()} after test.
-	 * @return svn URL, http ideally
-	 */
-	public CmsTestRepository getRepository() {
-		return getRepository(null);
-	}
-	
-	private String getCaller() {
-		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-		for (int i = 1; i < stackTrace.length; i++) {
-			if (!this.getClass().getName().equals(stackTrace[i].getClassName())) {
-				return stackTrace[i].getClassName();// + "." + stackTrace[i].getMethodName();
-			}
-		}
-		return stackTrace[0].getClassName();
-	}
-	
-	/**
 	 * Creates a new repository and adds content from a dumpfile.
+	 * Call {@link #tearDown()} after test.
 	 * @param dumpfile from svnadmin dump
 	 * @return repository with the dupfile loaded
 	 */
-	public CmsTestRepository getRepository(InputStream dumpfile) {
+	public CmsTestRepository getRepository() {
 		String tempName = "test-" + new Base32().encode(System.currentTimeMillis()) + "." + getCaller();
-		String url = getSvnHttpParentUrl() + tempName;
-		File dir = new File(getSvnParentPath(), tempName);
+		return getRepository(tempName);
+	}
+	
+	public CmsTestRepository getRepository(String name) {
+		String url = getSvnHttpParentUrl() + name;
+		File dir = new File(getSvnParentPath(), name);
+		if (dir.exists()) {
+			throw new IllegalArgumentException("Test repository folder " + dir.getAbsolutePath() + " already exists. Remove manually and rerun test.");
+		}
 		
 		try {
 			SVNRepositoryFactory.createLocalRepository(dir, true, false);
@@ -170,10 +156,6 @@ public class SvnTestSetup {
 		
 		CmsTestRepository repo = connect(dir, url);
 		testRepositories.add(repo);
-		
-		if (dumpfile != null) {
-			load(dir, dumpfile);
-		}
 		
 		return repo;
 	}
@@ -201,15 +183,6 @@ public class SvnTestSetup {
 		return repo;
 	}
 	
-	public void load(File localRepositoryDir, InputStream dumpfile) {
-		SVNAdminClient svnadmin = new SVNAdminClient(SVNWCUtil.createDefaultAuthenticationManager(), null);
-		try {
-			svnadmin.doLoad(localRepositoryDir, dumpfile);
-		} catch (SVNException e) {
-			throw new RuntimeException("Error not handled", e);
-		}
-	}
-	
 	/**
 	 * Always call this after tests, clears temporary files from local file system.
 	 */
@@ -228,6 +201,16 @@ public class SvnTestSetup {
 			}
 		}
 		testRepositories.clear();
+	}
+	
+	private String getCaller() {
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		for (int i = 1; i < stackTrace.length; i++) {
+			if (!this.getClass().getName().equals(stackTrace[i].getClassName())) {
+				return stackTrace[i].getClassName();// + "." + stackTrace[i].getMethodName();
+			}
+		}
+		return stackTrace[0].getClassName();
 	}
 	
 }
