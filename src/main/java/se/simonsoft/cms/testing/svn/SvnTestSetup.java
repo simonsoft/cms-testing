@@ -144,6 +144,7 @@ public class SvnTestSetup {
 	public CmsTestRepository getRepository(String name) {
 		String url = getSvnHttpParentUrl() + name;
 		File dir = new File(getSvnParentPath(), name);
+		// TODO might need to wait and retry if name is taken because build server may run simultaneous builds with modules using the same repository name (common for CMS tests)
 		if (dir.exists()) {
 			throw new IllegalArgumentException("Test repository folder " + dir.getAbsolutePath() + " already exists. Remove manually and rerun test.");
 		}
