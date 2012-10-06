@@ -155,10 +155,27 @@ public class SvnTestSetup {
 			throw new RuntimeException("Error not handled", e);
 		}
 		
+		chmodNewRepository(dir);
+		
 		CmsTestRepository repo = connect(dir, url);
 		testRepositories.add(repo);
 		
 		return repo;
+	}
+
+	/**
+	 * Set permissions so that the repository will be read-writable both by apache and test runner locally.
+	 * @param dir The local repository folder
+	 */
+	private void chmodNewRepository(File dir) {
+		// java.nio.file.attribute.PosixFileAttributes is Java 1.7 only
+		try {
+			String cmd = "chmod -R g+rw " + dir.getAbsolutePath();
+			//logger.debug("Running {}", cmd);
+			Runtime.getRuntime().exec(cmd);
+		} catch (IOException e) {
+			logger.info("Recursive chmod failed", e);
+		}
 	}
 
 	public CmsTestRepository connect(File localRepositoryDir, String repositoryRootUrl) {
