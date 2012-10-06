@@ -121,7 +121,7 @@ public class SvnTestSetup {
 		} catch (IOException e) {
 			throw new RuntimeException("Svn test setup failed", e);
 		}
-		if (head.getStatus() != 200) {
+		if (head.getStatus() != 200 && head.getStatus() != 401) {
 			logger.debug("Rejecting URL", restUrl, "due to status", head.getStatus());
 			return false;
 		}
