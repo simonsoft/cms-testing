@@ -168,14 +168,18 @@ public class SvnTestSetup {
 	 * @param dir The local repository folder
 	 */
 	private void chmodNewRepository(File dir) {
+		File dav = new File(dir, "dav");
+		dav.mkdir();
+		new File(dav, "activities.d").mkdir(); // owned by wwwrun and not group writable on jenkins server
 		// java.nio.file.attribute.PosixFileAttributes is Java 1.7 only
 		try {
-			String cmd = "chmod -R g+rw " + dir.getAbsolutePath();
+			String cmd = "chmod -R g+w " + dir.getAbsolutePath();
 			//logger.debug("Running {}", cmd);
 			Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			logger.info("Recursive chmod failed", e);
 		}
+		
 	}
 
 	public CmsTestRepository connect(File localRepositoryDir, String repositoryRootUrl) {
