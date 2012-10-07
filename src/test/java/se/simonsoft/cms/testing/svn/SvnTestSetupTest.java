@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
@@ -111,6 +112,18 @@ public class SvnTestSetupTest {
 		} catch (IllegalArgumentException e) {
 			// expected
 		}
+	}
+	
+	@Test
+	@Ignore // leaves a test repo every time
+	public void testNamedRepositoryKeep() {
+		CmsTestRepository repo = SvnTestSetup.getInstance().getRepository("testaut1");
+		repo.keep();
+		assertEquals("testaut1", repo.getLocalFolder().getName());
+		assertTrue(repo.getUrl().endsWith("/testaut1"));
+		assertTrue(repo.getLocalFolder().exists());
+		tearDown();
+		assertFalse("should have renamed to a unique name at keep so next text can use the name", repo.getLocalFolder().exists());
 	}
 	
 }

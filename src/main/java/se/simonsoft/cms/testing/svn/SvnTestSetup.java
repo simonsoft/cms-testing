@@ -137,11 +137,22 @@ public class SvnTestSetup {
 	 * @return repository with the dupfile loaded
 	 */
 	public CmsTestRepository getRepository() {
-		String tempName = "test-" + new Base32().encode(System.currentTimeMillis()) + "." + getCaller();
-		return getRepository(tempName);
+		String tempName = getTestName();
+		return getRepository(tempName, false);
+	}
+
+	private String getTestName() {
+		return "test-" + new Base32().encode(System.currentTimeMillis()) + "." + getCaller();
 	}
 	
 	public CmsTestRepository getRepository(String name) {
+		return getRepository(name, true);
+	}
+	
+	/**
+	 * @param isCmsName true if the name is important for the test due to cms functionality
+	 */
+	public CmsTestRepository getRepository(String name, boolean isCmsName) {
 		String url = getSvnHttpParentUrl() + name;
 		File dir = new File(getSvnParentPath(), name);
 		// TODO might need to wait and retry if name is taken because build server may run simultaneous builds with modules using the same repository name (common for CMS tests)
@@ -158,6 +169,7 @@ public class SvnTestSetup {
 		chmodNewRepository(dir);
 		
 		CmsTestRepository repo = connect(dir, url);
+		repo.setRenameAtKeep(isCmsName);
 		testRepositories.add(repo);
 		
 		return repo;
@@ -211,9 +223,17 @@ public class SvnTestSetup {
 	public void tearDown() {
 		for (CmsTestRepository r : testRepositories) {
 			if (r.isKeep()) {
-				System.out.println("Test repository " + r.getName() + " kept at:"
-						+ "\n file://" + r.getLocalFolder().getAbsolutePath()
-						+ "\n " + r.getUrl());
+				if (r.isRenameAtKeep()) {
+					String name = r.getName() + "-" + getTestName();
+					File dest = new File(r.getLocalFolder().getParentFile(), name);
+					r.getLocalFolder().renameTo(dest);
+					System.out.println("Test repoistory " + r.getName() + " kept at:"
+							+ "\n" + dest.getAbsolutePath());
+				} else {
+					System.out.println("Test repository " + r.getName() + " kept at:"
+							+ "\n file://" + r.getLocalFolder().getAbsolutePath()
+							+ "\n " + r.getUrl());
+				}
 			} else {
 				try {
 					FileUtils.deleteDirectory(r.getLocalFolder());

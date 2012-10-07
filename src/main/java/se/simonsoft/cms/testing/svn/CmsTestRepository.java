@@ -38,6 +38,7 @@ public class CmsTestRepository extends CmsRepository {
 	private String password;
 	
 	private boolean keep = false;
+	private boolean renameAtKeep;
 
 	public CmsTestRepository(SVNRepository svnkit, File repoFolder, String user, String password) {
 		super(getUrl(svnkit));
@@ -127,6 +128,14 @@ public class CmsTestRepository extends CmsRepository {
 		} catch (SVNException e) {
 			throw new RuntimeException("Failed to verify connection to test repository", e);
 		}
+	}
+
+	void setRenameAtKeep(boolean renameAtKeep) {
+		this.renameAtKeep = renameAtKeep;
+	}
+	
+	boolean isRenameAtKeep() {
+		return renameAtKeep;
 	}
 
 }
