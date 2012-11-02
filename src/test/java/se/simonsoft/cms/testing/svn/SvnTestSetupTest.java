@@ -63,9 +63,9 @@ public class SvnTestSetupTest {
 		assertTrue("got " + repoUrl, repoUrl.startsWith(SvnTestSetup.getInstance().getSvnHttpParentUrl()));
 		assertTrue("got " + repoUrl, repoUrl.length() > SvnTestSetup.getInstance().getSvnHttpParentUrl().length() + 10);
 		assertTrue(!repoUrl.endsWith("/"));
-		assertTrue(repo.getLocalFolder().exists());
-		assertTrue(repo.getLocalFolder().canRead());
-		assertTrue("should be a subversion repository", new File(repo.getLocalFolder(), "format").exists());
+		assertTrue(repo.getAdminPath().exists());
+		assertTrue(repo.getAdminPath().canRead());
+		assertTrue("should be a subversion repository", new File(repo.getAdminPath(), "format").exists());
 	}
 	
 	@Test
@@ -104,7 +104,7 @@ public class SvnTestSetupTest {
 	@Test
 	public void testNamedRepository() {
 		CmsTestRepository repo = SvnTestSetup.getInstance().getRepository("testaut1");
-		assertEquals("testaut1", repo.getLocalFolder().getName());
+		assertEquals("testaut1", repo.getAdminPath().getName());
 		assertTrue(repo.getUrl().endsWith("/testaut1"));
 		try {
 			SvnTestSetup.getInstance().getRepository("testaut1");
@@ -119,11 +119,11 @@ public class SvnTestSetupTest {
 	public void testNamedRepositoryKeep() {
 		CmsTestRepository repo = SvnTestSetup.getInstance().getRepository("testaut1");
 		repo.keep();
-		assertEquals("testaut1", repo.getLocalFolder().getName());
+		assertEquals("testaut1", repo.getAdminPath().getName());
 		assertTrue(repo.getUrl().endsWith("/testaut1"));
-		assertTrue(repo.getLocalFolder().exists());
+		assertTrue(repo.getAdminPath().exists());
 		tearDown();
-		assertFalse("should have renamed to a unique name at keep so next text can use the name", repo.getLocalFolder().exists());
+		assertFalse("should have renamed to a unique name at keep so next text can use the name", repo.getAdminPath().exists());
 	}
 	
 }

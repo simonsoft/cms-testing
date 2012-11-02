@@ -28,12 +28,11 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
 import org.tmatesoft.svn.core.wc2.SvnOperationFactory;
 
-import se.simonsoft.cms.item.CmsRepository;
+import se.simonsoft.cms.item.inspection.CmsRepositoryInspection;
 
-public class CmsTestRepository extends CmsRepository {
+public class CmsTestRepository extends CmsRepositoryInspection {
 
 	private SVNRepository svnkit;
-	private File repoFolder;
 	private String user;
 	private String password;
 	
@@ -41,9 +40,8 @@ public class CmsTestRepository extends CmsRepository {
 	private boolean renameAtKeep;
 
 	public CmsTestRepository(SVNRepository svnkit, File repoFolder, String user, String password) {
-		super(getUrl(svnkit));
+		super(getUrl(svnkit), repoFolder);
 		this.svnkit = svnkit;
-		this.repoFolder = repoFolder;
 		this.user = user;
 		this.password = password;
 	}
@@ -55,7 +53,7 @@ public class CmsTestRepository extends CmsRepository {
 	public CmsTestRepository load(InputStream dumpfile) {
 		SVNAdminClient svnadmin = new SVNAdminClient(SVNWCUtil.createDefaultAuthenticationManager(), null);
 		try {
-			svnadmin.doLoad(repoFolder, dumpfile);
+			svnadmin.doLoad(getAdminPath(), dumpfile);
 		} catch (SVNException e) {
 			throw new RuntimeException("Error not handled", e);
 		}
@@ -107,10 +105,6 @@ public class CmsTestRepository extends CmsRepository {
 				return repo.getSvnkit();
 			}
 		};
-	}
-
-	public File getLocalFolder() {
-		return repoFolder;
 	}
 
 	public String getAuthenticatedUser() {

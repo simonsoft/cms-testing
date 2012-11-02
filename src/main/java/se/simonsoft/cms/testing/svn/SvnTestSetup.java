@@ -225,18 +225,18 @@ public class SvnTestSetup {
 			if (r.isKeep()) {
 				if (r.isRenameAtKeep()) {
 					String name = r.getName() + "-" + getTestName();
-					File dest = new File(r.getLocalFolder().getParentFile(), name);
-					r.getLocalFolder().renameTo(dest);
+					File dest = new File(r.getAdminPath().getParentFile(), name);
+					r.getAdminPath().renameTo(dest);
 					System.out.println("Test repoistory " + r.getName() + " kept at:"
 							+ "\n" + dest.getAbsolutePath());
 				} else {
 					System.out.println("Test repository " + r.getName() + " kept at:"
-							+ "\n file://" + r.getLocalFolder().getAbsolutePath()
+							+ "\n file://" + r.getAdminPath().getAbsolutePath()
 							+ "\n " + r.getUrl());
 				}
 			} else {
 				try {
-					FileUtils.deleteDirectory(r.getLocalFolder());
+					FileUtils.deleteDirectory(r.getAdminPath());
 				} catch (IOException e) {
 					throw new RuntimeException("Error not handled", e);
 				}
