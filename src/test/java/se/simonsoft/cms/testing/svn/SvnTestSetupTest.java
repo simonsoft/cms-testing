@@ -103,11 +103,11 @@ public class SvnTestSetupTest {
 
 	@Test
 	public void testNamedRepository() {
-		CmsTestRepository repo = SvnTestSetup.getInstance().getRepository("testaut1");
-		assertEquals("testaut1", repo.getAdminPath().getName());
-		assertTrue(repo.getUrl().endsWith("/testaut1"));
+		CmsTestRepository repo = SvnTestSetup.getInstance().getRepository("myNamedRepo");
+		assertEquals("myNamedRepo", repo.getAdminPath().getName());
+		assertTrue(repo.getUrl().endsWith("/myNamedRepo"));
 		try {
-			SvnTestSetup.getInstance().getRepository("testaut1");
+			SvnTestSetup.getInstance().getRepository("myNamedRepo");
 			fail("Should refuse to create a repository with same name as existing");
 		} catch (IllegalArgumentException e) {
 			// expected
