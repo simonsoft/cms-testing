@@ -22,6 +22,7 @@ import javax.inject.Provider;
 
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
@@ -105,6 +106,14 @@ public class CmsTestRepository extends CmsRepositoryInspection {
 				return repo.getSvnkit();
 			}
 		};
+	}
+	
+	public SVNURL getUrlSvnkit() {
+		try {
+			return SVNURL.parseURIEncoded(getUrl());
+		} catch (SVNException e) {
+			throw new IllegalStateException("Invalid internal repository URL " + getUrl());
+		}
 	}
 
 	public String getAuthenticatedUser() {
