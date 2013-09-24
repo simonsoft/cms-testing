@@ -41,7 +41,9 @@ public class SvnTestSetup {
 	private final Lgr logger = LgrFactory.getLogger();
 	
 	public static final String[] TRY_PATHS = {
-		"/home/cmsadmin/svn"
+		"/home/cmsadmin/testsvn",
+		"/home/cmsadmin/svn",
+		"C:/Repositories" // VisualSVN server
 	};
 	
 	public static final String[] TRY_URLS = {
