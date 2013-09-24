@@ -43,7 +43,7 @@ public class SvnTestSetup {
 	public static final String[] TRY_PATHS = {
 		"/home/cmsadmin/testsvn",
 		"/home/cmsadmin/svn",
-		"C:/Repositories" // VisualSVN server
+		"C:/Repositories" // Collabnet "Subversion 1.8.3 + Apache Server (Windows 32-bit)" frtom http://www.collab.net/downloads/subversion is good on windows, but add SVNListParentPath to /svn at the end of httpd.conf
 	};
 	
 	public static final String[] TRY_URLS = {
