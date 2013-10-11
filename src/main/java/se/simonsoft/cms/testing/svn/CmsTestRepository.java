@@ -29,9 +29,9 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
 import org.tmatesoft.svn.core.wc2.SvnOperationFactory;
 
-import se.simonsoft.cms.item.inspection.CmsRepositoryInspection;
+public class CmsTestRepository extends CmsRepositoryLocal {
 
-public class CmsTestRepository extends CmsRepositoryInspection {
+	private static final long serialVersionUID = 1L;
 
 	private SVNRepository svnkit;
 	private String user;
