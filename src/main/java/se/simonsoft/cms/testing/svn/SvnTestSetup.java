@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009-2012 Simonsoft Nordic AB
+ * Copyright (C) 2009-2013 Simonsoft Nordic AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,8 @@ public class SvnTestSetup {
 	private final Lgr logger = LgrFactory.getLogger();
 	
 	public static final String[] TRY_PATHS = {
-		"/home/cmsadmin/testsvn",
-		"/home/cmsadmin/svn",
-		"C:/Repositories" // Collabnet "Subversion 1.8.3 + Apache Server (Windows 32-bit)" frtom http://www.collab.net/downloads/subversion is good on windows, but add SVNListParentPath to /svn at the end of httpd.conf
+		"C:/Repositories"
+		 // Collabnet "Subversion 1.8.3 + Apache Server (Windows 32-bit)" frtom http://www.collab.net/downloads/subversion is good on windows, but add SVNListParentPath to /svn at the end of httpd.conf
 	};
 	
 	public static final String[] TRY_URLS = {
@@ -168,7 +167,7 @@ public class SvnTestSetup {
 			throw new RuntimeException("Error not handled", e);
 		}
 		
-		chmodNewRepository(dir);
+		//chmodNewRepository(dir);
 		
 		CmsTestRepository repo = connect(dir, url);
 		repo.setRenameAtKeep(isCmsName);
@@ -238,9 +237,12 @@ public class SvnTestSetup {
 				}
 			} else {
 				try {
-					FileUtils.deleteDirectory(r.getAdminPath());
+					
+					if (r.getAdminPath().exists()) {
+						FileUtils.deleteDirectory(r.getAdminPath());
+					}
 				} catch (IOException e) {
-					throw new RuntimeException("Error not handled", e);
+					throw new RuntimeException("Unable to delete directory " + r.getAdminPath(), e);
 				}
 			}
 		}
