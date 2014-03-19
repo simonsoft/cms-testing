@@ -41,8 +41,9 @@ public class SvnTestSetup {
 	private final Lgr logger = LgrFactory.getLogger();
 	
 	public static final String[] TRY_PATHS = {
-		"C:/Repositories"
-		 // Collabnet "Subversion 1.8.3 + Apache Server (Windows 32-bit)" frtom http://www.collab.net/downloads/subversion is good on windows, but add SVNListParentPath to /svn at the end of httpd.conf
+		"/home/cmsadmin/testsvn",
+		"/home/cmsadmin/svn",
+		"C:/Repositories" // Collabnet "Subversion 1.8.3 + Apache Server (Windows 32-bit)" frtom http://www.collab.net/downloads/subversion is good on windows, but add SVNListParentPath to /svn at the end of httpd.conf
 	};
 	
 	public static final String[] TRY_URLS = {
@@ -167,7 +168,7 @@ public class SvnTestSetup {
 			throw new RuntimeException("Error not handled", e);
 		}
 		
-		//chmodNewRepository(dir);
+		chmodNewRepository(dir);
 		
 		CmsTestRepository repo = connect(dir, url);
 		repo.setRenameAtKeep(isCmsName);
@@ -237,12 +238,9 @@ public class SvnTestSetup {
 				}
 			} else {
 				try {
-					
-					if (r.getAdminPath().exists()) {
-						FileUtils.deleteDirectory(r.getAdminPath());
-					}
+					FileUtils.deleteDirectory(r.getAdminPath());
 				} catch (IOException e) {
-					throw new RuntimeException("Unable to delete directory " + r.getAdminPath(), e);
+					throw new RuntimeException("Error not handled", e);
 				}
 			}
 		}
