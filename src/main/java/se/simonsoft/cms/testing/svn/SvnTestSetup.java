@@ -43,12 +43,14 @@ public class SvnTestSetup {
 	public static final String[] TRY_PATHS = {
 		"/home/cmsadmin/testsvn",
 		"/home/cmsadmin/svn",
+		"/Users/Shared/testsvn", // TODO: Investigate test setup based on Vagrant VM.
 		"C:/Repositories" // Collabnet "Subversion 1.8.3 + Apache Server (Windows 32-bit)" frtom http://www.collab.net/downloads/subversion is good on windows, but add SVNListParentPath to /svn at the end of httpd.conf
 	};
 	
 	public static final String[] TRY_URLS = {
 		"http://localhost/svn/",
-		"http://localdev:8530/svn/"
+		"http://localdev:8530/svn/",
+		"https://ubuntu-cheftest1.pdsvision.net/svn/"
 	};
 	
 	private static SvnTestSetup instance = null;
