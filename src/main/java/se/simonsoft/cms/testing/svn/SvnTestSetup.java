@@ -17,8 +17,13 @@ package se.simonsoft.cms.testing.svn;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.FileUtils;
 import org.tmatesoft.svn.core.SVNException;
@@ -33,6 +38,7 @@ import se.repos.lgr.LgrFactory;
 import se.repos.restclient.ResponseHeaders;
 import se.repos.restclient.RestClient;
 import se.repos.restclient.RestURL;
+import se.repos.restclient.auth.RestAuthenticationClientCert;
 import se.repos.restclient.javase.RestClientJavaNet;
 import se.simonsoft.cms.item.encoding.Base32;
 
@@ -43,14 +49,15 @@ public class SvnTestSetup {
 	public static final String[] TRY_PATHS = {
 		"/home/cmsadmin/testsvn",
 		"/home/cmsadmin/svn",
-		"/Users/Shared/testsvn", // TODO: Investigate test setup based on Vagrant VM. Map to Linux folder /srv/cms/svn
+		"/Users/Shared/testsvn", 
 		"C:/Repositories" // Collabnet "Subversion 1.8.3 + Apache Server (Windows 32-bit)" frtom http://www.collab.net/downloads/subversion is good on windows, but add SVNListParentPath to /svn at the end of httpd.conf
 	};
 	
 	public static final String[] TRY_URLS = {
 		"http://localhost/svn/",
-		"http://localdev:8530/svn/",
-		"https://ubuntu-cheftest1.pdsvision.net/svn/"
+		"https://ubuntu-cheftest1.pdsvision.net/svn/",
+		"http://localdev:8530/svn/"
+		
 	};
 	
 	private static SvnTestSetup instance = null;
@@ -106,18 +113,41 @@ public class SvnTestSetup {
 	}
 	
 	public String getSvnHttpUsername(String repositoryRootUrl) {
-		return "test";
+		String name = "test";
+		
+		if (repositoryRootUrl.startsWith("https://ubuntu")) {
+			name = name + "user";
+		}
+		
+		return name;
 	}
 	
 	public String getSvnHttpPassword(String repositoryRootUrl) {
-		return "test";
+		
+		String pass = "test";
+		
+		if (repositoryRootUrl.startsWith("https://ubuntu")) {
+			pass = pass + "password";
+		}
+		
+		return pass;
 	}
 	
 	private boolean isHttpUrlSvnParent(String httpUrl) {
+		
 		RestURL restUrl = new RestURL(httpUrl);
-		RestClient restClientJavaNet = new RestClientJavaNet(restUrl.r(), null);
-		ResponseHeaders head;
+		RestAuthenticationClientCert auth = null;
 		try {
+			auth = new RestAuthenticationClientCert(getIgnoringTrustManager(), null, "testuser", "testpassword");
+		} catch (KeyManagementException e1) {
+			//Should not happen, so won't handle the error.
+			e1.printStackTrace();
+		}
+		RestClient restClientJavaNet = new RestClientJavaNet(restUrl.r(), auth);
+		ResponseHeaders head;
+		
+		try {
+			
 			head = restClientJavaNet.head(restUrl.p());
 		} catch (java.net.ConnectException ec) {
 			logger.debug("Rejecting URL", restUrl, "due to connection error:", ec.toString());
@@ -132,6 +162,19 @@ public class SvnTestSetup {
 		// TODO check for "Colleciton of repositories"
 		logger.debug("URL", restUrl, "ok with content type", head.getContentType());
 		return true;
+	}
+	/**
+	 * @return Mocked TrustManager that ignores cert's.
+	 */
+	
+	private TrustManager getIgnoringTrustManager() {
+		return new X509TrustManager() {
+			public X509Certificate[] getAcceptedIssuers() {	return null; }
+			
+			public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+			
+			public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+		};
 	}
 	
 	/**
