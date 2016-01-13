@@ -55,7 +55,7 @@ public class SvnTestSetup {
 	
 	public static final String[] TRY_URLS = {
 		"http://localhost/svn/",
-		"https://ubuntu-cheftest1.pdsvision.net/svn/",
+		"https://ubuntu-cheftest1.pdsvision.net/testsvn/",
 		"http://localdev:8530/svn/"
 		
 	};
@@ -113,24 +113,11 @@ public class SvnTestSetup {
 	}
 	
 	public String getSvnHttpUsername(String repositoryRootUrl) {
-		String name = "test";
-		
-		if (repositoryRootUrl.startsWith("https://ubuntu")) {
-			name = name + "user";
-		}
-		
-		return name;
+		return "testuser";
 	}
 	
 	public String getSvnHttpPassword(String repositoryRootUrl) {
-		
-		String pass = "test";
-		
-		if (repositoryRootUrl.startsWith("https://ubuntu")) {
-			pass = pass + "password";
-		}
-		
-		return pass;
+		return "testpassword";
 	}
 	
 	private boolean isHttpUrlSvnParent(String httpUrl) {
