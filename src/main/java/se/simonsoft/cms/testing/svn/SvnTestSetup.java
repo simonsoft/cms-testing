@@ -26,12 +26,15 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.helpers.MessageFormatter;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.BasicAuthenticationManager;
+import org.tmatesoft.svn.core.internal.io.dav.DAVRepository;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
+import org.tmatesoft.svn.util.Version;
 
 import se.repos.lgr.Lgr;
 import se.repos.lgr.LgrFactory;
@@ -236,10 +239,23 @@ public class SvnTestSetup {
 			throw new RuntimeException("Error not handled", e);
 		}
 		
+		String version = Version.getMajorVersion() + "." + Version.getMinorVersion() + "." + Version.getMicroVersion();
+		String revNumber = Version.getRevisionString();
+		String verMsg = MessageFormatter.format("SVNKit version {}", new Object[] { version + " (r" + revNumber + ")" }).getMessage();
+		logger.info(verMsg);
+
+		
 		SVNRepository svnkit;
 		DAVRepositoryFactory.setup();
 		try {
 			svnkit = SVNRepositoryFactory.create(svnurl);
+			
+			// Will SVNKit enable HTTPv2 by default in 1.9.0? 
+			if (svnkit instanceof DAVRepository && true) {
+				DAVRepository dav = (DAVRepository) svnkit; 
+				dav.setHttpV2Enabled(true);
+				logger.warn("Enabled HttpV2 support in DAVRepository instance.");
+			}
 		} catch (SVNException e) {
 			throw new RuntimeException("Error not handled", e);
 		}
