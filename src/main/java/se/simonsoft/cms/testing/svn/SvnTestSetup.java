@@ -26,6 +26,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
@@ -36,8 +38,6 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.util.Version;
 
-import se.repos.lgr.Lgr;
-import se.repos.lgr.LgrFactory;
 import se.repos.restclient.ResponseHeaders;
 import se.repos.restclient.RestClient;
 import se.repos.restclient.RestURL;
@@ -47,7 +47,7 @@ import se.simonsoft.cms.item.encoding.Base32;
 
 public class SvnTestSetup {
 
-	private final Lgr logger = LgrFactory.getLogger();
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	public static final String[] TRY_PATHS = {
 		"/home/cmsadmin/testsvn",
