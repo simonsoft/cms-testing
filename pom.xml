@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>se.repos</groupId>
 			<artifactId>restclient</artifactId>
-			<version>1.3.2</version>
+			<version>1.3.6</version>
 		</dependency>
 		<dependency>
 			<groupId>se.simonsoft</groupId>
