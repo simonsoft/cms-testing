@@ -250,8 +250,8 @@ public class SvnTestSetup {
 		try {
 			svnkit = SVNRepositoryFactory.create(svnurl);
 			
-			// Will SVNKit enable HTTPv2 by default in 1.9.0? 
-			if (svnkit instanceof DAVRepository && true) {
+			// SVNKit keeps HTTPv2 disabled by default in 1.9.0. 
+			if (svnkit instanceof DAVRepository && false) {
 				DAVRepository dav = (DAVRepository) svnkit; 
 				dav.setHttpV2Enabled(true);
 				logger.warn("Enabled HttpV2 support in DAVRepository instance.");
