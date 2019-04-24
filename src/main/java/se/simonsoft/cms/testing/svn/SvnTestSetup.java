@@ -277,7 +277,7 @@ public class SvnTestSetup {
 					String name = r.getName() + "-" + getTestName();
 					File dest = new File(r.getAdminPath().getParentFile(), name);
 					r.getAdminPath().renameTo(dest);
-					System.out.println("Test repoistory " + r.getName() + " kept at:"
+					System.out.println("Test repository " + r.getName() + " kept at:"
 							+ "\n" + dest.getAbsolutePath());
 				} else {
 					System.out.println("Test repository " + r.getName() + " kept at:"
