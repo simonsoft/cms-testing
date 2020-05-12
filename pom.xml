@@ -38,7 +38,26 @@
 		<dependency>
 			<groupId>org.tmatesoft.svnkit</groupId>
 			<artifactId>svnkit</artifactId>
-			<version>1.9.0</version>
+			<version>1.10.1</version>
+			<exclusions>
+		    	<!-- We're not using svn+ssh protocol -->
+		    	<exclusion>
+		    		<groupId>com.trilead</groupId>
+		    		<artifactId>trilead-ssh2</artifactId>
+		    	</exclusion>
+		    	<exclusion>
+		    		<artifactId>
+		    			jsch.agentproxy.connector-factory
+		    		</artifactId>
+		    		<groupId>com.jcraft</groupId>
+		    	</exclusion>
+		    	<exclusion>
+		    		<artifactId>
+		    			jsch.agentproxy.svnkit-trilead-ssh2
+		    		</artifactId>
+		    		<groupId>com.jcraft</groupId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>se.repos</groupId>
