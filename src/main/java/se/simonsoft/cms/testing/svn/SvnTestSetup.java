@@ -288,7 +288,9 @@ public class SvnTestSetup {
 				try {
 					FileUtils.deleteDirectory(r.getAdminPath());
 				} catch (IOException e) {
-					throw new RuntimeException("Error not handled", e);
+					// With SVNKit 10.1 the tearDown fails to delete files. Possibly newer repo format triggering additional files created by Apache.
+					logger.warn("Failed tearDown of test repository: {}", e.getMessage(), e);
+					//throw new RuntimeException("Error not handled", e);
 				}
 			}
 		}
