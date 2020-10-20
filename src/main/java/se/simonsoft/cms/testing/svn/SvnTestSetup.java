@@ -64,6 +64,7 @@ public class SvnTestSetup {
 	};
 	
 	private static SvnTestSetup instance = null;
+	private static long sleepRepositoryCreated = 10L; // Attempt to avoid Permission denied on 'db/txn-current-lock'.
 	
 	private String urlRoot = null;
 	private File pathParent = null;
@@ -203,7 +204,17 @@ public class SvnTestSetup {
 			throw new RuntimeException("Error not handled", e);
 		}
 		
+		try {
+			Thread.sleep(sleepRepositoryCreated);
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Error while sleeping", e);
+		}
 		chmodNewRepository(dir);
+		try {
+			Thread.sleep(sleepRepositoryCreated);
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Error while sleeping", e);
+		}
 		
 		CmsTestRepository repo = connect(dir, url);
 		repo.setRenameAtKeep(isCmsName);
