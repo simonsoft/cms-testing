@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.tmatesoft.svnkit</groupId>
 			<artifactId>svnkit</artifactId>
-			<version>1.10.2</version>
+			<version>1.10.3</version>
 			<exclusions>
 		    	<!-- We're not using svn+ssh protocol -->
 		    	<exclusion>
