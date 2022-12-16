@@ -42,7 +42,7 @@ import se.repos.restclient.ResponseHeaders;
 import se.repos.restclient.RestClient;
 import se.repos.restclient.RestURL;
 import se.repos.restclient.auth.RestAuthenticationClientCert;
-import se.repos.restclient.javase.RestClientJavaNet;
+import se.repos.restclient.javase.RestClientJavaHttp;
 import se.simonsoft.cms.item.encoding.Base32;
 
 public class SvnTestSetup {
@@ -134,7 +134,7 @@ public class SvnTestSetup {
 			//Should not happen, so won't handle the error.
 			e1.printStackTrace();
 		}
-		RestClient restClientJavaNet = new RestClientJavaNet(restUrl.r(), auth);
+		RestClient restClientJavaNet = new RestClientJavaHttp(restUrl.r(), auth);
 		ResponseHeaders head;
 		
 		try {
