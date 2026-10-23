@@ -13,7 +13,7 @@
 		<groupId>se.simonsoft</groupId>
 		<artifactId>cms-maven-parent</artifactId>
 		<relativePath/>
-		<version>11.0.3</version>
+		<version>11.0.4</version>
 	</parent>
 
 	<repositories>
